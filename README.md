@@ -1,1 +1,0 @@
-# sistema-de-mercado-N1
