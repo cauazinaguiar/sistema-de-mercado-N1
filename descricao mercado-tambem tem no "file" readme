@@ -1,0 +1,80 @@
+Este projeto é um sistema de compras, desenvolvido em linguagem C, que permite gerenciar produtos em um mercado. Nele, vai ter um cadastro de produtos, adição desses produtos a um carrinho de compras, remoção de itens do carrinho, e fechamento de pedido com um valor final.
+
+Funcionalidades Implementadas
+
+Cadastrar Produto:
+
+O usuário pode cadastrar novos produtos, informando um nome e um preço para o produto. Cada produto recebe automaticamente um código exclusivo (incrementado conforme os produtos são cadastrados).
+
+Listar Produtos:
+
+Exibe todos os produtos cadastrados, mostrando o código, nome, e preço de cada produto.
+
+Comprar Produto:
+
+Nessa função, o usuário escolhee um produto da lista de produtos cadastrados, informando o código do produto e a quantidade desejada. O sistema verifica se o produto já está no carrinho utilizando a função PegarProdutoPorCodigo() e, se estiver, atualiza a quantidade. Caso contrário, adiciona o novo produto ao carrinho.
+
+Visualizar Carrinho:
+
+Exibe os produtos atualmente no carrinho, mostrando o código, nome, quantidade, preço unitário e o preço total por produto, além do valor acumulado da compra.
+
+Remover Produto do Carrinho:
+
+Nessa função, implementada opcionlamente por necessidade do codigo, o usuário pode remover um produto do carrinho informando o código do produto. Após a remoção, o carrinho é atualizado.
+
+Fechar Pedido:
+
+Exibe a fatura final com a lista de produtos comprados, suas quantidades e o valor total da compra. Após fechar o pedido, o carrinho é esvaziado.
+
+Sair do Sistema:
+
+Permite que o usuário encerre o programa.
+
+Instruções para Compilar e Executar
+
+Pré-requisitos:
+
+Um compilador C (como gcc).
+Sistema operacional que suporte o comando system("clear") e a função sleep() (Linux ou Unix-like, mas no Windows pode-se usar system("cls") e substituir sleep() por Sleep() com os devidos ajustes).
+
+Compilar o Programa
+
+Para compilar o programa, utilize um terminal e navegue até o diretório onde o arquivo foi salvo. Execute o seguinte comando:
+
+bash
+Copiar código
+gcc -o mercado mercado.c
+Isto irá compilar o código e gerar um arquivo executável chamado mercado.
+
+Executar o Programa
+
+Após compilar, para rodar o sistema de mercado, execute o seguinte comando no terminal:
+
+bash
+Copiar código
+./mercado
+O sistema abrirá o menu principal onde as opções de interação estarão disponíveis.
+
+Descrição Técnica
+
+Estruturas de Dados Utilizadas
+
+Produto:
+A estrutura Produto contém três atributos:
+nome: String que armazena o nome do produto (até 29 caracteres).
+preco: Um float que armazena o preço do produto.
+codigo: Um int que armazena o código único de cada produto.
+Carrinho:
+A estrutura Carrinho contém:
+produto: Um Produto que referencia o produto adicionado ao carrinho.
+quantidade: Um int que armazena a quantidade daquele produto no carrinho.
+Funções Implementadas
+pegarProdutoPorCodigo: Retorna um produto específico baseado no código fornecido.
+temNoCarrinho: Verifica se um produto já está no carrinho e retorna o índice desse produto, ou -1 se não estiver presente.
+cadastrarProduto: Permite ao usuário cadastrar um novo produto.
+listarProdutos: Exibe os produtos cadastrados.
+comprarProduto: Adiciona um produto ao carrinho ou atualiza a quantidade se já estiver presente.
+visualizarCarrinho: Mostra todos os itens no carrinho, com detalhes de preços.
+removerProdutoCarrinho: Remove um produto específico do carrinho.
+fecharPedido: Mostra a fatura final e limpa o carrinho após o pedido ser finalizado.
+menu: Exibe o menu de opções e permite ao usuário interagir com o sistema.
