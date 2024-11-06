@@ -1,0 +1,164 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <locale.h>
+
+#define MAX_PRODUTOS 50
+#define MAX_CARRINHO 50
+
+typedef struct Produto {
+    char nome[30];
+    float preco;
+    int codigo;
+} Produto;
+
+typedef struct Carrinho {
+    Produto produto;
+    int quantidade;
+} Carrinho;
+
+typedef struct Sistema {
+    Produto produtos[MAX_PRODUTOS];
+    int produtoCadastrado;
+    Carrinho carrinho[MAX_CARRINHO];
+    int produtoCarrinho;
+} Sistema;
+
+Produto criarProduto(char nome[], float preco, int codigo) {
+    Produto novoProduto;
+    strncpy(novoProduto.nome, nome, sizeof(novoProduto.nome) - 1);
+    novoProduto.nome[sizeof(novoProduto.nome) - 1] = '\0';
+    novoProduto.preco = preco;
+    novoProduto.codigo = codigo;
+    return novoProduto;
+}
+
+Produto pegarProdutoPorCodigo(Sistema *sistema, int codigo) {
+    for (int i = 0; i < sistema->produtoCadastrado; i++) {
+        if (sistema->produtos[i].codigo == codigo) {
+            return sistema->produtos[i];
+        }
+    }
+    return criarProduto("", 0.0, -1);
+}
+
+void cadastrarProduto(Sistema *sistema) {
+    if (sistema->produtoCadastrado >= MAX_PRODUTOS) {
+        puts("Limite de produtos cadastrados atingido.\n");
+        return;
+    }
+
+    Produto novoProduto;
+    novoProduto.codigo = sistema->produtoCadastrado + 1;
+
+    printf("Digite o nome do produto: ");
+    fgets(novoProduto.nome, sizeof(novoProduto.nome), stdin);
+    strtok(novoProduto.nome, "\n");
+
+    printf("Digite o preço do produto: ");
+    while (scanf("%f", &novoProduto.preco) != 1) {
+        printf("Preço inválido. Tente novamente: ");
+        while (getchar() != '\n'); 
+    }
+
+    sistema->produtos[sistema->produtoCadastrado++] = novoProduto;
+    printf("Produto cadastrado com sucesso!\n\n");
+}
+
+void listarProdutos(Sistema *sistema) {
+    if (sistema->produtoCadastrado == 0) {
+        puts("Nenhum produto foi cadastrado!");
+        return;
+    }
+
+    puts("Lista de Produtos Cadastrados:");
+    for (int i = 0; i < sistema->produtoCadastrado; i++) {
+        Produto prod = sistema->produtos[i];
+        printf("Código: %d\nNome: %s\nPreço: R$ %.2f\n\n", prod.codigo, prod.nome, prod.preco);
+    }
+}
+
+void visualizarCarrinho(Sistema *sistema) {
+    if (sistema->produtoCarrinho == 0) {
+        puts("Seu carrinho está vazio!");
+        return;
+    }
+
+    puts("Conteúdo do Carrinho:");
+    for (int i = 0; i < sistema->produtoCarrinho; i++) {
+        Carrinho item = sistema->carrinho[i];
+        printf("Código: %d\nNome: %s\nQuantidade: %d\nPreço unitário: R$ %.2f\nPreço total: R$ %.2f\n\n",
+               item.produto.codigo, item.produto.nome, item.quantidade,
+               item.produto.preco, item.produto.preco * item.quantidade);
+    }
+}
+
+void comprarProduto(Sistema *sistema) {
+    if (sistema->produtoCadastrado == 0) {
+        puts("Nenhum produto cadastrado para comprar.");
+        return;
+    }
+
+    listarProdutos(sistema);
+
+    int codigo;
+    printf("Digite o código do produto: ");
+    while (scanf("%d", &codigo) != 1) {
+        printf("Código inválido. Tente novamente: ");
+        while (getchar() != '\n'); 
+    }
+
+    Produto produtoSelecionado = pegarProdutoPorCodigo(sistema, codigo);
+    if (produtoSelecionado.codigo == -1) {
+        puts("Produto não encontrado.");
+        return;
+    }
+
+    int quantidade;
+    printf("Digite a quantidade desejada: ");
+    while (scanf("%d", &quantidade) != 1) {
+        printf("Quantidade inválida. Tente novamente: ");
+        while (getchar() != '\n'); 
+    }
+
+    int encontrado = -1;
+    for (int i = 0; i < sistema->produtoCarrinho; i++) {
+        if (sistema->carrinho[i].produto.codigo == codigo) {
+            encontrado = i;
+            break;
+        }
+    }
+
+    if (encontrado != -1) {
+        sistema->carrinho[encontrado].quantidade += quantidade;
+        printf("A quantidade do produto '%s' foi atualizada.\n", sistema->carrinho[encontrado].produto.nome);
+    } else {
+        sistema->carrinho[sistema->produtoCarrinho].produto = produtoSelecionado;
+        sistema->carrinho[sistema->produtoCarrinho].quantidade = quantidade;
+        sistema->produtoCarrinho++;
+        printf("Produto adicionado ao carrinho.\n");
+    }
+}
+
+int main() {
+    setlocale(LC_ALL, "Portuguese");
+    Sistema sistema = {.produtoCadastrado = 0, .produtoCarrinho = 0};
+    int opcao;
+
+    do {
+        puts("1. Cadastrar Produto\n2. Listar Produtos\n3. Comprar Produto\n4. Visualizar Carrinho\n5. Sair");
+        scanf("%d", &opcao);
+        getchar(); // Consome o caractere '\n' residual
+
+        switch (opcao) {
+            case 1: cadastrarProduto(&sistema); break;
+            case 2: listarProdutos(&sistema); break;
+            case 3: comprarProduto(&sistema); break;
+            case 4: visualizarCarrinho(&sistema); break;
+            case 5: puts("Saindo..."); break;
+            default: puts("Opção inválida."); break;
+        }
+    } while (opcao != 5);
+
+    return 0;
+}
